@@ -10,7 +10,7 @@ public interface TagService {
 
     List<TagDto> findAll();
 
-    TagDto findById();
+    TagDto findById(Long id);
 
     TagDto update();
 }

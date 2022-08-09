@@ -4,6 +4,7 @@ import com.epam.esm.converters.DtoToTagConverter;
 import com.epam.esm.converters.TagToDtoConverter;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.exceptions.EntityNotFoundException;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validators.GiftCertificateValidator;
@@ -15,10 +16,10 @@ import java.util.List;
 @Service
 public class TagServiceImpl implements TagService {
 
-    private TagDao tagDao;
-    private DtoToTagConverter dtoToTagConverter;
-    private TagToDtoConverter tagToDtoConverter;
-    private GiftCertificateValidator validator;
+    private final TagDao tagDao;
+    private final DtoToTagConverter dtoToTagConverter;
+    private final TagToDtoConverter tagToDtoConverter;
+    private final GiftCertificateValidator validator;
 
     @Autowired
     public TagServiceImpl(TagDao tagDao, DtoToTagConverter dtoToTagConverter, TagToDtoConverter tagToDtoConverter, GiftCertificateValidator validator) {
@@ -36,12 +37,12 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<TagDto> findAll() {
-        return null;
+        return tagDao.findAll().stream().map(tagToDtoConverter::convert).toList();
     }
 
     @Override
-    public TagDto findById() {
-        return null;
+    public TagDto findById(Long id) {
+        return tagDao.findById(id).map(tagToDtoConverter::convert).orElseThrow(EntityNotFoundException::new);
     }
 
     @Override
