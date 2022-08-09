@@ -9,4 +9,8 @@ public interface TagService {
     TagDto create(TagDto tagDto);
 
     List<TagDto> findAll();
+
+    TagDto findById();
+
+    TagDto update();
 }
