@@ -30,7 +30,6 @@ public class TagDaoImpl implements TagDao {
     }
 
 
-
     @Override
     public Tag insert(Tag tag) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -57,11 +56,16 @@ public class TagDaoImpl implements TagDao {
 
     @Override
     public int update(Long id, Tag tag) {
-        return 0;
+        return jdbcTemplate.update(UPDATE_TAG_BY_ID, tag.getName(), id);
     }
 
     @Override
     public int deleteById(Long id) {
-        return 0;
+        return jdbcTemplate.update(DELETE_TAG_BY_ID, id);
+    }
+
+    @Override
+    public int isUsed(Long id) {
+        return jdbcTemplate.queryForObject(IS_USED_TAG, Integer.class, id);
     }
 }
