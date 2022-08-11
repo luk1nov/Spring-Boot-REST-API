@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/tags")
 public class TagsController {
-
     private final TagService tagService;
 
     @Autowired
@@ -35,6 +34,16 @@ public class TagsController {
     @GetMapping
     public List<TagDto> findAll(){
         return tagService.findAll();
+    }
+
+    @DeleteMapping("/{id}")
+    public TagDto deleteById(@PathVariable Long id){
+        return tagService.delete(id);
+    }
+
+    @PatchMapping("/{id}")
+    public TagDto update(@PathVariable Long id, @RequestBody TagDto tagDto){
+        return tagService.update(id, tagDto);
     }
 
 }
