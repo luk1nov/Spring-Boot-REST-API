@@ -1,22 +1,22 @@
 package com.epam.esm.exception;
 
 import com.epam.esm.exceptions.EntityNotFoundException;
+import com.epam.esm.exceptions.InternalServerException;
+import com.epam.esm.exceptions.InvalidDataProvidedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
+import java.time.LocalDateTime;
 import java.util.Locale;
-import java.util.Map;
+
+import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 public class ControllerAdvisor {
-    private static final String ERROR_MESSAGE = "errorMessage";
-    private static final String ERROR_CODE = "errorCode";
     private final ResourceBundleMessageSource resourceBundleMessageSource;
 
     @Autowired
@@ -25,20 +25,35 @@ public class ControllerAdvisor {
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<Object> handleEntityNotFoundException(EntityNotFoundException e, Locale locale){
-        return new ResponseEntity<>(createResponse(e.getErrorCode(), locale), HttpStatus.NOT_FOUND);
+    @ResponseStatus(NOT_FOUND)
+    public ExceptionResponse handleEntityNotFoundException(EntityNotFoundException e, Locale locale){
+        return exceptionResponseBuilder(e.getErrorCode(), locale);
+
     }
 
+    @ExceptionHandler(InvalidDataProvidedException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public ExceptionResponse handleInvalidDataProvidedException(InvalidDataProvidedException e, Locale locale){
+        return exceptionResponseBuilder(e.getErrorCode(), locale);
 
-    private Map<String, Object> createResponse(int errorCode, Locale locale){
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put(ERROR_CODE, errorCode);
-        response.put(ERROR_MESSAGE, resourceBundleMessageSource.getMessage(getMessageByCode(errorCode), null, locale));
-        return response;
     }
 
+    @ExceptionHandler(InternalServerException.class)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    public ExceptionResponse handleInternalServerException(InvalidDataProvidedException e, Locale locale){
+        return exceptionResponseBuilder(e.getErrorCode(), locale);
+    }
 
-    private String getMessageByCode(int errorCode) {
-        return "error." + errorCode;
+    private ExceptionResponse exceptionResponseBuilder(int errorCode, Locale locale){
+        return ExceptionResponse.builder()
+                .errorCode(errorCode)
+                .message(getErrorMessageFromResourceBundle(errorCode, locale))
+                .timestamp(LocalDateTime.now())
+                .build();
+    }
+
+    private String getErrorMessageFromResourceBundle(int errorCode, Locale locale){
+        String key = "error." + errorCode;
+        return resourceBundleMessageSource.getMessage(key, null, locale);
     }
 }
