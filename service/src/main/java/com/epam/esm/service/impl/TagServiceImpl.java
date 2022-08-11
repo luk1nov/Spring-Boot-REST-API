@@ -5,13 +5,17 @@ import com.epam.esm.converters.TagToDtoConverter;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exceptions.EntityNotFoundException;
+import com.epam.esm.exceptions.InternalServerException;
+import com.epam.esm.exceptions.InvalidDataProvidedException;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validators.GiftCertificateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -46,7 +50,25 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public TagDto update() {
-        return null;
+    @Transactional
+    public TagDto update(Long id, TagDto tagDto) {
+        TagDto foundTag = findById(id);
+        if(validator.isValidTagName(tagDto.getName())){
+            if (tagDao.update(id, dtoToTagConverter.convert(tagDto)) > 0){
+                foundTag.setName(tagDto.getName());
+                return foundTag;
+            }
+            throw new InternalServerException();
+        }
+        throw new InvalidDataProvidedException();
+    }
+
+    @Override
+    public TagDto delete(Long id) {
+        TagDto tag = findById(id);
+        if(tagDao.deleteById(id) > 0){
+            return tag;
+        }
+        throw new EntityNotFoundException();
     }
 }

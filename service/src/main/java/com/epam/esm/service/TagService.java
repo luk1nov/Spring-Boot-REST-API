@@ -12,5 +12,7 @@ public interface TagService {
 
     TagDto findById(Long id);
 
-    TagDto update();
+    TagDto update(Long id, TagDto tagDto);
+
+    TagDto delete(Long id);
 }
