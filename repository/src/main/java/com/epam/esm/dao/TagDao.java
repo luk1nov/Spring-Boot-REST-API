@@ -1,10 +1,11 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Tag;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface TagDao extends BaseDao<Tag>{
+    Optional<Tag> findByName(String name);
+
     int isUsed(Long id);
 }

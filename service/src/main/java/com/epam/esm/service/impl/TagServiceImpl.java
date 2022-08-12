@@ -4,6 +4,7 @@ import com.epam.esm.converters.DtoToTagConverter;
 import com.epam.esm.converters.TagToDtoConverter;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.exceptions.EntityAlreadyExistsException;
 import com.epam.esm.exceptions.EntityNotFoundException;
 import com.epam.esm.exceptions.InternalServerException;
 import com.epam.esm.exceptions.InvalidDataProvidedException;
@@ -35,8 +36,15 @@ public class TagServiceImpl implements TagService {
 
 
     @Override
+    @Transactional
     public TagDto create(TagDto tagDto) {
-        return tagToDtoConverter.convert(tagDao.insert(dtoToTagConverter.convert(tagDto)));
+        if(validator.isValidTagName(tagDto.getName())){
+            if (tagDao.findByName(tagDto.getName()).isEmpty()){
+                return tagToDtoConverter.convert(tagDao.insert(dtoToTagConverter.convert(tagDto)));
+            }
+            throw new EntityAlreadyExistsException();
+        }
+        throw new InvalidDataProvidedException();
     }
 
     @Override
@@ -45,6 +53,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public TagDto findById(Long id) {
         return tagDao.findById(id).map(tagToDtoConverter::convert).orElseThrow(EntityNotFoundException::new);
     }

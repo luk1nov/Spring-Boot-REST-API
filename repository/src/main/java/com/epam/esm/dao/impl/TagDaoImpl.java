@@ -3,6 +3,7 @@ package com.epam.esm.dao.impl;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.model.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -62,6 +63,13 @@ public class TagDaoImpl implements TagDao {
     @Override
     public int deleteById(Long id) {
         return jdbcTemplate.update(DELETE_TAG_BY_ID, id);
+    }
+
+    @Override
+    public Optional<Tag> findByName(String name) {
+        return jdbcTemplate.query(FIND_TAG_BY_NAME, new BeanPropertyRowMapper<>(Tag.class), name)
+                .stream()
+                .findFirst();
     }
 
     @Override
