@@ -1,5 +1,6 @@
 package com.epam.esm.dto;
 
+import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,9 @@ import java.time.LocalDateTime;
 
 @EqualsAndHashCode
 @ToString
+@Builder
 public class GiftCertificateDto {
+    private long id;
     private String name;
     private String description;
     private BigDecimal price;
@@ -17,7 +20,9 @@ public class GiftCertificateDto {
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateDate;
 
-    public GiftCertificateDto(String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate) {
+
+    public GiftCertificateDto(long id, String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate) {
+        this.id = id;
         this.name = name;
         this.description = description;
         this.price = price;
