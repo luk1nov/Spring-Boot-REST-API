@@ -76,4 +76,12 @@ public class TagDaoImpl implements TagDao {
     public int isUsed(Long id) {
         return jdbcTemplate.queryForObject(IS_USED_TAG, Integer.class, id);
     }
+
+    @Override
+    public Tag findOrCreate(Tag tag) {
+        return jdbcTemplate.query(FIND_TAG_BY_NAME, new BeanPropertyRowMapper<>(Tag.class), tag.getName())
+                .stream()
+                .findFirst()
+                .orElseGet(() -> insert(tag));
+    }
 }

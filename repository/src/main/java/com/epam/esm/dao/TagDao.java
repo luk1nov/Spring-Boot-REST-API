@@ -8,4 +8,6 @@ public interface TagDao extends BaseDao<Tag>{
     Optional<Tag> findByName(String name);
 
     int isUsed(Long id);
+
+    Tag findOrCreate(Tag tag);
 }
