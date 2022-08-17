@@ -11,7 +11,7 @@ import java.util.Set;
 @Component
 public class GiftCertificateValidatorImpl implements GiftCertificateValidator {
     private static final String NAME_PATTERN = "^[a-zA-ZА-яЁё\\s]{2,45}$";
-    private static final String DESCRIPTION_PATTERN = "^[a-zA-ZА-яЁё\\s]{2,225}$";
+    private static final String DESCRIPTION_PATTERN = "^[a-zA-ZА-яЁё\\s]{2,100}$";
     private static final BigDecimal MIN_PRICE = BigDecimal.valueOf(1);
     private static final BigDecimal MAX_PRICE = BigDecimal.valueOf(1000);
     private static final int MIN_DURATION = 1;

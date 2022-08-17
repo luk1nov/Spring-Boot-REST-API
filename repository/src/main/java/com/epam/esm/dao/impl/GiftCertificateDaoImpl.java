@@ -77,6 +77,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
             ps.setBigDecimal(3, giftCertificate.getPrice());
             ps.setInt(4, giftCertificate.getDuration());
             ps.setTimestamp(5, Timestamp.valueOf(giftCertificate.getLastUpdateDate()));
+            ps.setLong(6, id);
             return ps;
         });
     }
