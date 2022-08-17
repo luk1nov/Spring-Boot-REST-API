@@ -18,5 +18,11 @@ public class SqlQuery {
             LEFT JOIN tag ON tag.id = gift_certificate_has_tag.tag_id
             """;
     public static final String FIND_CERTIFICATE_BY_ID = FIND_ALL_CERTIFICATES + " WHERE gift_certificate.id = ?";
+    public static final String DELETE_CERTIFICATE_BY_ID = "DELETE FROM gift_certificate WHERE id = ?";
+    public static final String DELETE_ALL_TAGS_FROM_CERTIFICATE = "DELETE FROM gift_certificate_has_tag WHERE gift_certificate_id = ?";
+    public static final String FIND_CERTIFICATE_BY_TAG = FIND_ALL_CERTIFICATES + " WHERE tag_id = ?";
+    public static final String UPDATE_GIFT_CERTIFICATE = "UPDATE gift_certificate SET name = ?, description = ? price = ?, duration = ?, last_update_date = ? WHERE id = ?";
 
+    private SqlQuery() {
+    }
 }
