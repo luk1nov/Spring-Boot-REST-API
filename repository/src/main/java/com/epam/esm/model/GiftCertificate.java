@@ -11,6 +11,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder
 public non-sealed class GiftCertificate extends AbstractEntity{
     private String name;
@@ -21,17 +22,6 @@ public non-sealed class GiftCertificate extends AbstractEntity{
     private LocalDateTime lastUpdateDate;
     @Builder.Default
     private Set<Tag> tags = new LinkedHashSet<>();
-
-    public GiftCertificate(long id, String name, String description, BigDecimal price, int duration, LocalDateTime createDate, LocalDateTime lastUpdateDate, Set<Tag> tags) {
-        super(id);
-        this.name = name;
-        this.description = description;
-        this.price = price;
-        this.duration = duration;
-        this.createDate = createDate;
-        this.lastUpdateDate = lastUpdateDate;
-        this.tags = tags;
-    }
 
     public boolean addTag(Tag tag){
         return tags.add(tag);
