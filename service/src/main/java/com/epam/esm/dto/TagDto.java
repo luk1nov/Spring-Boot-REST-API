@@ -1,5 +1,6 @@
 package com.epam.esm.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import org.springframework.stereotype.Component;
@@ -8,7 +9,9 @@ import org.springframework.stereotype.Component;
 @ToString
 @Component
 public class TagDto {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
+
     private String name;
 
     public TagDto() {
