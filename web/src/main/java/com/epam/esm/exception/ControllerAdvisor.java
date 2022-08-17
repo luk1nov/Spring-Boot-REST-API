@@ -1,11 +1,8 @@
 package com.epam.esm.exception;
 
-import com.epam.esm.exceptions.EntityNotFoundException;
-import com.epam.esm.exceptions.InternalServerException;
-import com.epam.esm.exceptions.InvalidDataProvidedException;
+import com.epam.esm.exceptions.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -24,30 +21,49 @@ public class ControllerAdvisor {
         this.resourceBundleMessageSource = resourceBundleMessageSource;
     }
 
-    @ExceptionHandler(EntityNotFoundException.class)
+    @ExceptionHandler
     @ResponseStatus(NOT_FOUND)
     public ExceptionResponse handleEntityNotFoundException(EntityNotFoundException e, Locale locale){
-        return exceptionResponseBuilder(e.getErrorCode(), locale);
-
+        return exceptionResponseBuilder(e, e.getErrorCode(), locale);
     }
 
-    @ExceptionHandler(InvalidDataProvidedException.class)
+    @ExceptionHandler(EntityAlreadyExistsException.class)
+    @ResponseStatus(CONFLICT)
+    public ExceptionResponse handleEntityAlreadyExists(EntityAlreadyExistsException e, Locale locale){
+        return exceptionResponseBuilder(e, e.getErrorCode(), locale);
+    }
+
+    @ExceptionHandler
     @ResponseStatus(BAD_REQUEST)
-    public ExceptionResponse handleInvalidDataProvidedException(InvalidDataProvidedException e, Locale locale){
-        return exceptionResponseBuilder(e.getErrorCode(), locale);
-
+    public ExceptionResponse handleUpdatingEntityException(InvalidDataProvidedException e, Locale locale){
+        ExceptionResponse response = exceptionResponseBuilder(e, e.getErrorCode(), locale);
+        response.setDescription(e.getMessage());
+        return response;
     }
 
-    @ExceptionHandler(InternalServerException.class)
+    @ExceptionHandler
+    @ResponseStatus(BAD_REQUEST)
+    public ExceptionResponse handleEntityCreationException(EntityCreationException e, Locale locale){
+        return exceptionResponseBuilder(e, e.getErrorCode(), locale);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(BAD_REQUEST)
+    public ExceptionResponse handleEntityCreationException(EntityModifyingException e, Locale locale){
+        return exceptionResponseBuilder(e, e.getErrorCode(), locale);
+    }
+
+    @ExceptionHandler
     @ResponseStatus(INTERNAL_SERVER_ERROR)
-    public ExceptionResponse handleInternalServerException(InvalidDataProvidedException e, Locale locale){
-        return exceptionResponseBuilder(e.getErrorCode(), locale);
+    public ExceptionResponse handleInternalServerException(InternalServerException e, Locale locale){
+        return exceptionResponseBuilder(e, e.getErrorCode(), locale);
     }
 
-    private ExceptionResponse exceptionResponseBuilder(int errorCode, Locale locale){
+    private ExceptionResponse exceptionResponseBuilder(Throwable e, int errorCode, Locale locale){
         return ExceptionResponse.builder()
                 .errorCode(errorCode)
                 .message(getErrorMessageFromResourceBundle(errorCode, locale))
+                .description(e.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();
     }
