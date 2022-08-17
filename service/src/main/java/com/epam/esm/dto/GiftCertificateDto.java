@@ -1,5 +1,7 @@
 package com.epam.esm.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,12 +18,15 @@ import java.util.Set;
 @Builder
 @Component
 public class GiftCertificateDto {
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
     private String name;
     private String description;
     private BigDecimal price;
     private int duration;
+    @JsonIgnore
     private LocalDateTime createDate;
+    @JsonIgnore
     private LocalDateTime lastUpdateDate;
     private Set<TagDto> tags;
 }
