@@ -14,5 +14,6 @@ import java.time.LocalDateTime;
 public class ExceptionResponse {
     private int errorCode;
     private String message;
+    private String description;
     private LocalDateTime timestamp;
 }
