@@ -1,7 +1,7 @@
 package com.epam.esm.exceptions;
 
 public class InvalidDataProvidedException extends RuntimeException{
-    private final int ERROR_CODE = 50001;
+    private final int ERROR_CODE = 40001;
 
     public InvalidDataProvidedException(String message) {
         super(message);
