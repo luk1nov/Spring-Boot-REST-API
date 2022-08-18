@@ -9,4 +9,10 @@ public interface TagService {
     TagDto create(TagDto tagDto);
 
     List<TagDto> findAll();
+
+    TagDto findById(Long id);
+
+    TagDto update(Long id, TagDto tagDto);
+
+    TagDto delete(Long id);
 }

@@ -1,14 +1,18 @@
 package com.epam.esm.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
+@SuperBuilder
 public non-sealed class GiftCertificate extends AbstractEntity{
     private String name;
     private String description;
@@ -16,5 +20,10 @@ public non-sealed class GiftCertificate extends AbstractEntity{
     private int duration;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateDate;
-    private Set<Tag> tags;
+    @Builder.Default
+    private Set<Tag> tags = new LinkedHashSet<>();
+
+    public boolean addTag(Tag tag){
+        return tags.add(tag);
+    }
 }

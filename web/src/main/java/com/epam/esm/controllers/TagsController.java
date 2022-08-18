@@ -8,11 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/tags")
 public class TagsController {
-
-    private TagService tagService;
+    private final TagService tagService;
 
     @Autowired
     public TagsController(TagService tagService) {
@@ -21,13 +22,28 @@ public class TagsController {
 
     @GetMapping("/{id}")
     public TagDto findById(@PathVariable Long id){
-        return new TagDto(1, "buba");
+        return tagService.findById(id);
     }
 
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public TagDto insert(@RequestBody TagDto tagDto){
         return tagService.create(tagDto);
+    }
+
+    @GetMapping
+    public List<TagDto> findAll(){
+        return tagService.findAll();
+    }
+
+    @DeleteMapping("/{id}")
+    public TagDto deleteById(@PathVariable Long id){
+        return tagService.delete(id);
+    }
+
+    @PatchMapping("/{id}")
+    public TagDto update(@PathVariable Long id, @RequestBody TagDto tagDto){
+        return tagService.update(id, tagDto);
     }
 
 }
