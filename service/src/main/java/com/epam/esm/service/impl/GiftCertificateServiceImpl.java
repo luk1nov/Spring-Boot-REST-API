@@ -75,7 +75,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public GiftCertificateDto deleteById(Long id) {
-        if(Objects.isNull(id)){
+        if(Objects.nonNull(id)){
             GiftCertificateDto giftCertificateDto = findById(id);
             if(giftCertificateDao.deleteById(id) > 0){
                 return giftCertificateDto;
