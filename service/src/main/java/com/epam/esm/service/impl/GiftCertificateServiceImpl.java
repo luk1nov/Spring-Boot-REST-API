@@ -51,14 +51,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             return certificateToDtoConverter.convert(created);
         }
         throw new EntityCreationException();
-
     }
 
     @Override
     @Transactional
     public GiftCertificateDto findById(Long id) {
         if(Objects.isNull(id)){
-            throw new EntityNotFoundException();
+            throw new InvalidDataProvidedException("Certificate not found since id is null");
         }
         return giftCertificateDao.findById(id)
                 .map(certificateToDtoConverter::convert)
@@ -144,6 +143,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             message = "invalid duration - " + giftCertificateDto.getDescription();
         } else if (!validator.isValidCertificatePrice(giftCertificateDto.getPrice())) {
             message = "invalid price - " + giftCertificateDto.getDescription();
+        } else if (!validator.isValidTags(giftCertificateDto.getTags())) {
+            message = "invalid tags";
         }
 
         if(Objects.nonNull(message)){
