@@ -3,27 +3,52 @@ package com.epam.esm.model;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-@EqualsAndHashCode(callSuper = true)
 @Data
-@NoArgsConstructor
+@Builder
 @AllArgsConstructor
-@SuperBuilder
-public non-sealed class GiftCertificate extends AbstractEntity{
+@NoArgsConstructor
+@Entity
+@Table(name = "gift_certificate")
+public class GiftCertificate extends AbstractEntity{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private long id;
+
     private String name;
     private String description;
     private BigDecimal price;
     private int duration;
+
+    @Column(name = "create_date")
     private LocalDateTime createDate;
+
+    @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
-    @Builder.Default
-    private Set<Tag> tags = new LinkedHashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "gift_certificate_has_tag"
+            , joinColumns = @JoinColumn(name = "gift_certificate_id", referencedColumnName = "id")
+            , inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
+    private Set<Tag> tagList = new LinkedHashSet<>();
+
+    @PrePersist
+    public void prePersist(){
+        createDate = LocalDateTime.now();
+        lastUpdateDate = createDate;
+    }
+
+    @PreUpdate
+    public void preUpdate(){
+        lastUpdateDate = LocalDateTime.now();
+    }
 
     public boolean addTag(Tag tag){
-        return tags.add(tag);
+        return tagList.add(tag);
     }
 }
