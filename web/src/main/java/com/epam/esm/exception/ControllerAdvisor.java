@@ -27,7 +27,7 @@ public class ControllerAdvisor {
         return exceptionResponseBuilder(e, e.getErrorCode(), locale);
     }
 
-    @ExceptionHandler(EntityAlreadyExistsException.class)
+    @ExceptionHandler
     @ResponseStatus(CONFLICT)
     public ExceptionResponse handleEntityAlreadyExists(EntityAlreadyExistsException e, Locale locale){
         return exceptionResponseBuilder(e, e.getErrorCode(), locale);

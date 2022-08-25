@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @SpringBootApplication
 public class SpringBootRestApplication implements WebMvcConfigurer {
-    private static final String ERROR_MESSAGES_FILE = "/error_messages";
+    private static final String ERROR_MESSAGES_FILE = "error_messages";
     private static final String ENCODING = "UTF-8";
 
     public static void main(String[] args) {
