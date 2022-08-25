@@ -5,6 +5,8 @@ import com.epam.esm.converters.TagToDtoConverter;
 import com.epam.esm.dao.TagDao;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exceptions.*;
+import com.epam.esm.model.Tag;
+import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validators.GiftCertificateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -21,15 +24,16 @@ public class TagServiceImpl implements TagService {
     private final DtoToTagConverter dtoToTagConverter;
     private final TagToDtoConverter tagToDtoConverter;
     private final GiftCertificateValidator validator;
+    private final TagRepository tagRepository;
 
     @Autowired
-    public TagServiceImpl(TagDao tagDao, DtoToTagConverter dtoToTagConverter, TagToDtoConverter tagToDtoConverter, GiftCertificateValidator validator) {
+    public TagServiceImpl(TagDao tagDao, DtoToTagConverter dtoToTagConverter, TagToDtoConverter tagToDtoConverter, GiftCertificateValidator validator, TagRepository tagRepository) {
         this.tagDao = tagDao;
         this.dtoToTagConverter = dtoToTagConverter;
         this.tagToDtoConverter = tagToDtoConverter;
         this.validator = validator;
+        this.tagRepository = tagRepository;
     }
-
 
     @Override
     @Transactional
@@ -48,14 +52,14 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<TagDto> findAll() {
-        return tagDao.findAll().stream().map(tagToDtoConverter::convert).toList();
+        return tagRepository.findAll().stream().map(tagToDtoConverter::convert).toList();
     }
 
     @Override
     @Transactional
     public TagDto findById(Long id) {
         if(Objects.nonNull(id)){
-            return tagDao.findById(id).map(tagToDtoConverter::convert).orElseThrow(EntityNotFoundException::new);
+            return tagRepository.findById(id).map(tagToDtoConverter::convert).orElseThrow(EntityNotFoundException::new);
         }
         throw new EntityNotFoundException();
     }
