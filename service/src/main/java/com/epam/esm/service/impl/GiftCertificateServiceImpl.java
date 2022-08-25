@@ -47,7 +47,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             giftCertificateDto.setCreateDate(LocalDateTime.now());
             giftCertificateDto.setLastUpdateDate(giftCertificateDto.getCreateDate());
             GiftCertificate created = giftCertificateDao.insert(dtoToCertificateConverter.convert(giftCertificateDto));
-            giftCertificateDao.setTagsToCertificate(created.getId(), created.getTags());
+            giftCertificateDao.setTagsToCertificate(created.getId(), created.getTagList());
             return certificateToDtoConverter.convert(created);
         }
         throw new EntityCreationException();

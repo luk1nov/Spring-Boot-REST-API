@@ -82,7 +82,7 @@ class GiftCertificateServiceImplTest {
                 .duration(CERTIFICATE_DURATION)
                 .createDate(CREATION_DATE)
                 .lastUpdateDate(LAST_UPDATE_DATE)
-                .tags(Set.of(tag))
+                .tagList(Set.of(tag))
                 .build();
     }
 
