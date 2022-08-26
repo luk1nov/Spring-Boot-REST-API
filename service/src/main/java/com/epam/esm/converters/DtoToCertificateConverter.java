@@ -31,7 +31,7 @@ public class DtoToCertificateConverter implements Converter<GiftCertificateDto, 
                 .lastUpdateDate(giftCertificateDto.getLastUpdateDate())
                 .build();
         if(Objects.nonNull(giftCertificateDto.getTags())){
-            giftCertificate.setTagList(giftCertificateDto.getTags().stream().map(dtoToTagConverter::convert).collect(Collectors.toSet()));
+            giftCertificate.setTags(giftCertificateDto.getTags().stream().map(dtoToTagConverter::convert).collect(Collectors.toSet()));
         }
         return giftCertificate;
     }

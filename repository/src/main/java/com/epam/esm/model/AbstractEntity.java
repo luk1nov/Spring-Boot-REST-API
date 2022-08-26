@@ -5,6 +5,10 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-public abstract class AbstractEntity {
-
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder
+public abstract sealed class AbstractEntity permits Tag, GiftCertificate {
+    private long id;
 }

@@ -1,29 +1,18 @@
 package com.epam.esm.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-
-import javax.persistence.*;
-import java.util.Set;
 
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @NoArgsConstructor
-@Entity
-@Table(name = "tag")
-public class Tag extends AbstractEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
+public non-sealed class Tag extends AbstractEntity {
     private String name;
 
-    @ManyToMany(fetch = FetchType.EAGER, mappedBy = "tagList")
-    private Set<GiftCertificate> giftCertificates;
-
     public Tag(long id, String name) {
-        this.id = id;
+        super(id);
         this.name = name;
     }
 }

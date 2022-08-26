@@ -30,8 +30,8 @@ public class CertificateToDtoConverter implements Converter<GiftCertificate, Gif
                 .createDate(giftCertificate.getCreateDate())
                 .lastUpdateDate(giftCertificate.getLastUpdateDate())
                 .build();
-        if(Objects.nonNull(giftCertificate.getTagList())){
-            giftCertificateDto.setTags(giftCertificate.getTagList().stream().map(tagToDtoConverter::convert).collect(Collectors.toSet()));
+        if(Objects.nonNull(giftCertificate.getTags())){
+            giftCertificateDto.setTags(giftCertificate.getTags().stream().map(tagToDtoConverter::convert).collect(Collectors.toSet()));
         }
         return giftCertificateDto;
     }
