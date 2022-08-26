@@ -1,11 +1,9 @@
 package com.epam.esm.dao;
 
-import com.epam.esm.model.AbstractEntity;
-
 import java.util.List;
 import java.util.Optional;
 
-public interface BaseDao<T extends AbstractEntity> {
+public interface BaseDao<T> {
     T insert(T t);
 
     List<T> findAll();
