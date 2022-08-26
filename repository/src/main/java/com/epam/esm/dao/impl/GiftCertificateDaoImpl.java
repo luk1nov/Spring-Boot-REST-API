@@ -1,18 +1,14 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.GiftCertificateDao;
-import com.epam.esm.dao.TagDao;
-import com.epam.esm.dao.mapper.GiftCertificateExtractor;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Tag;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -30,25 +26,16 @@ import java.util.stream.Collectors;
 
 import static com.epam.esm.dao.constants.SqlQuery.*;
 
-@Repository
+@Component
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
-
+    private static final Logger logger = LogManager.getLogger();
     @PersistenceContext
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
     private final CriteriaBuilder criteriaBuilder;
 
-    private static final Logger logger = LogManager.getLogger();
-    private final JdbcTemplate jdbcTemplate;
-    private final TagDao tagDao;
-    private final GiftCertificateExtractor extractor;
-
     @Autowired
-    public GiftCertificateDaoImpl(EntityManager entityManager, JdbcTemplate jdbcTemplate, TagDao tagDao, GiftCertificateExtractor extractor) {
-        this.entityManager = entityManager;
+    public GiftCertificateDaoImpl() {
         this.criteriaBuilder = entityManager.getCriteriaBuilder();
-        this.jdbcTemplate = jdbcTemplate;
-        this.tagDao = tagDao;
-        this.extractor = extractor;
     }
 
     @Override
@@ -98,6 +85,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     @Override
     public int deleteById(Long id) {
+        entityManager.detach();
         return jdbcTemplate.update(DELETE_CERTIFICATE_BY_ID, id);
     }
 
