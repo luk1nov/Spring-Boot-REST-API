@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tags")
 public class TagsController {
+    private static final Logger logger = LoggerFactory.getLogger(TagsController.class);
     private final TagService tagService;
 
     @Autowired
@@ -41,7 +42,7 @@ public class TagsController {
         return tagService.delete(id);
     }
 
-    @PatchMapping("/{id}")
+    @PutMapping("/{id}")
     public TagDto update(@PathVariable Long id, @RequestBody TagDto tagDto){
         return tagService.update(id, tagDto);
     }
