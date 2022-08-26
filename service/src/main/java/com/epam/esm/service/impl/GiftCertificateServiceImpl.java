@@ -11,6 +11,7 @@ import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Tag;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.validators.GiftCertificateValidator;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -92,9 +93,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         GiftCertificateDto giftCertificateDto = findById(id);
         if(validator.isValidTags(tags)){
             tags.removeAll(giftCertificateDto.getTags());
+            LoggerFactory.getLogger(GiftCertificateServiceImpl.class).warn(tags.toString());
             Set<Tag> tagSet = tags.stream().map(dtoToTagConverter::convert).collect(Collectors.toSet());
             giftCertificateDao.setTagsToCertificate(id, tagSet);
-
             return tags;
         }
         throw new EntityNotFoundException();
