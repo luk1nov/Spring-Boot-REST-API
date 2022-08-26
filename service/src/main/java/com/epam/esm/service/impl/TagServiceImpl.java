@@ -86,9 +86,8 @@ public class TagServiceImpl implements TagService {
     public TagDto delete(Long id) {
         if(Objects.nonNull(id)){
             TagDto tag = findById(id);
-            if(tagDao.deleteById(id) > 0){
-                return tag;
-            }
+            tagRepository.deleteById(id);
+            return tag;
         }
         throw new EntityModifyingException();
     }
