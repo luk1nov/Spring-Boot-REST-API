@@ -12,7 +12,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.Timestamp;
@@ -24,8 +30,12 @@ import java.util.stream.Collectors;
 
 import static com.epam.esm.dao.constants.SqlQuery.*;
 
-@Component
+@Repository
 public class GiftCertificateDaoImpl implements GiftCertificateDao {
+
+    @PersistenceContext
+    private final EntityManager entityManager;
+    private final CriteriaBuilder criteriaBuilder;
 
     private static final Logger logger = LogManager.getLogger();
     private final JdbcTemplate jdbcTemplate;
@@ -33,7 +43,9 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     private final GiftCertificateExtractor extractor;
 
     @Autowired
-    public GiftCertificateDaoImpl(JdbcTemplate jdbcTemplate, TagDao tagDao, GiftCertificateExtractor extractor) {
+    public GiftCertificateDaoImpl(EntityManager entityManager, JdbcTemplate jdbcTemplate, TagDao tagDao, GiftCertificateExtractor extractor) {
+        this.entityManager = entityManager;
+        this.criteriaBuilder = entityManager.getCriteriaBuilder();
         this.jdbcTemplate = jdbcTemplate;
         this.tagDao = tagDao;
         this.extractor = extractor;
@@ -59,13 +71,15 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     @Override
     public List<GiftCertificate> findAll() {
-        return jdbcTemplate.query(FIND_ALL_CERTIFICATES, extractor);
+        CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
+        Root<GiftCertificate> certificateRoot = criteriaQuery.from(GiftCertificate.class);
+        criteriaQuery.select(certificateRoot);
+        return entityManager.createQuery(criteriaQuery).getResultList();
     }
 
     @Override
     public Optional<GiftCertificate> findById(Long id) {
-        List<GiftCertificate> certificates = jdbcTemplate.query(FIND_CERTIFICATE_BY_ID, extractor, id);
-        return !Objects.requireNonNull(certificates).isEmpty() ? Optional.of(certificates.get(0)) : Optional.empty();
+        return Optional.ofNullable(entityManager.find(GiftCertificate.class, id));
     }
 
     @Override
