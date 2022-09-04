@@ -34,7 +34,7 @@ public class GiftCertificate {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
+    @ManyToMany
     @JoinTable(name = "gift_certificate_has_tag"
             , joinColumns = @JoinColumn(name = "gift_certificate_id", referencedColumnName = "id")
             , inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
