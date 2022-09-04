@@ -8,6 +8,7 @@ import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validators.GiftCertificateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<TagDto> findAll() {
-        return tagRepository.findAll().stream().map(tagToDtoConverter::convert).toList();
+        return tagRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream().map(tagToDtoConverter::convert).toList();
     }
 
     @Override

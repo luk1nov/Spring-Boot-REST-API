@@ -2,8 +2,6 @@ package com.epam.esm.controllers;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.TagService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +11,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/tags")
 public class TagsController {
-    private static final Logger logger = LoggerFactory.getLogger(TagsController.class);
     private final TagService tagService;
 
     @Autowired
