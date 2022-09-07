@@ -9,10 +9,11 @@ import com.epam.esm.dto.TagDto;
 import com.epam.esm.exceptions.*;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Tag;
+import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.validators.GiftCertificateValidator;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,14 +31,16 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final CertificateToDtoConverter certificateToDtoConverter;
     private final DtoToTagConverter dtoToTagConverter;
     private final GiftCertificateValidator validator;
+    private final GiftCertificateRepository giftCertificateRepository;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, DtoToCertificateConverter dtoToCertificateConverter, CertificateToDtoConverter certificateToDtoConverter, DtoToTagConverter dtoToTagConverter, GiftCertificateValidator validator) {
+    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, DtoToCertificateConverter dtoToCertificateConverter, CertificateToDtoConverter certificateToDtoConverter, DtoToTagConverter dtoToTagConverter, GiftCertificateValidator validator, GiftCertificateRepository giftCertificateRepository) {
         this.giftCertificateDao = giftCertificateDao;
         this.dtoToCertificateConverter = dtoToCertificateConverter;
         this.certificateToDtoConverter = certificateToDtoConverter;
         this.dtoToTagConverter = dtoToTagConverter;
         this.validator = validator;
+        this.giftCertificateRepository = giftCertificateRepository;
     }
 
     @Override
@@ -67,7 +70,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificateDto> findAll() {
-        return giftCertificateDao.findAll().stream()
+        return giftCertificateRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
                 .map(certificateToDtoConverter::convert)
                 .toList();
     }
@@ -93,7 +96,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         GiftCertificateDto giftCertificateDto = findById(id);
         if(validator.isValidTags(tags)){
             tags.removeAll(giftCertificateDto.getTags());
-            LoggerFactory.getLogger(GiftCertificateServiceImpl.class).warn(tags.toString());
             Set<Tag> tagSet = tags.stream().map(dtoToTagConverter::convert).collect(Collectors.toSet());
             giftCertificateDao.setTagsToCertificate(id, tagSet);
             return tags;
