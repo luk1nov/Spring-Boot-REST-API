@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 @RestController
-@RequestMapping("/certificates")
+@RequestMapping("/api/certificates")
 public class GiftCertificatesController {
 
     private final GiftCertificateService service;
