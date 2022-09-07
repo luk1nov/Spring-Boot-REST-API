@@ -1,8 +1,11 @@
 package com.epam.esm.model;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Data
 @Entity
@@ -18,4 +21,9 @@ public class User {
     private String lastName;
     @Column(name = "email", unique = true, nullable = false)
     private String email;
+
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
+    @OneToMany(mappedBy = "user")
+    private Set<Order> orderSet;
 }
