@@ -1,16 +1,18 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.converters.CertificateToDtoConverter;
-import com.epam.esm.converters.DtoToCertificateConverter;
 import com.epam.esm.converters.DtoToTagConverter;
+import com.epam.esm.converters.impl.GiftCertificateConverterImpl;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.exceptions.*;
-import com.epam.esm.model.GiftCertificate;
+import com.epam.esm.exceptions.EntityModifyingException;
+import com.epam.esm.exceptions.EntityNotFoundException;
+import com.epam.esm.exceptions.InternalServerException;
+import com.epam.esm.exceptions.InvalidDataProvidedException;
 import com.epam.esm.model.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.service.TagService;
 import com.epam.esm.validators.GiftCertificateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -27,20 +29,20 @@ import java.util.stream.Collectors;
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private final GiftCertificateDao giftCertificateDao;
-    private final DtoToCertificateConverter dtoToCertificateConverter;
-    private final CertificateToDtoConverter certificateToDtoConverter;
+    private final GiftCertificateConverterImpl giftCertificateConverter;
     private final DtoToTagConverter dtoToTagConverter;
     private final GiftCertificateValidator validator;
     private final GiftCertificateRepository giftCertificateRepository;
+    private final TagService tagService;
 
     @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, DtoToCertificateConverter dtoToCertificateConverter, CertificateToDtoConverter certificateToDtoConverter, DtoToTagConverter dtoToTagConverter, GiftCertificateValidator validator, GiftCertificateRepository giftCertificateRepository) {
+    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao, GiftCertificateConverterImpl giftCertificateConverter, DtoToTagConverter dtoToTagConverter, GiftCertificateValidator validator, GiftCertificateRepository giftCertificateRepository, TagService tagService) {
         this.giftCertificateDao = giftCertificateDao;
-        this.dtoToCertificateConverter = dtoToCertificateConverter;
-        this.certificateToDtoConverter = certificateToDtoConverter;
+        this.giftCertificateConverter = giftCertificateConverter;
         this.dtoToTagConverter = dtoToTagConverter;
         this.validator = validator;
         this.giftCertificateRepository = giftCertificateRepository;
+        this.tagService = tagService;
     }
 
     @Override
@@ -48,30 +50,28 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) {
         if(Objects.nonNull(giftCertificateDto)){
             validateGiftCertificate(giftCertificateDto);
-            giftCertificateDto.setCreateDate(LocalDateTime.now());
-            giftCertificateDto.setLastUpdateDate(giftCertificateDto.getCreateDate());
-            GiftCertificate created = giftCertificateDao.insert(dtoToCertificateConverter.convert(giftCertificateDto));
-            giftCertificateDao.setTagsToCertificate(created.getId(), created.getTagList());
-            return certificateToDtoConverter.convert(created);
+            setTagsToCertificate(giftCertificateDto);
+            return giftCertificateConverter.entityToDto(
+                    giftCertificateRepository.save(giftCertificateConverter.dtoToEntity(giftCertificateDto)));
         }
-        throw new EntityCreationException();
+        throw new InvalidDataProvidedException("gift certificate is null");
     }
 
     @Override
     @Transactional
     public GiftCertificateDto findById(Long id) {
-        if(Objects.isNull(id)){
-            throw new InvalidDataProvidedException("Certificate not found since id is null");
+        if(Objects.nonNull(id)){
+            return giftCertificateRepository.findById(id)
+                    .map(giftCertificateConverter::entityToDto)
+                    .orElseThrow(EntityNotFoundException::new);
         }
-        return giftCertificateDao.findById(id)
-                .map(certificateToDtoConverter::convert)
-                .orElseThrow(EntityNotFoundException::new);
+        throw new InvalidDataProvidedException("id is null");
     }
 
     @Override
     public List<GiftCertificateDto> findAll() {
         return giftCertificateRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
-                .map(certificateToDtoConverter::convert)
+                .map(giftCertificateConverter::entityToDto)
                 .toList();
     }
 
@@ -80,9 +80,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public GiftCertificateDto deleteById(Long id) {
         if(Objects.nonNull(id)){
             GiftCertificateDto giftCertificateDto = findById(id);
-            if(giftCertificateDao.deleteById(id) > 0){
-                return giftCertificateDto;
-            }
+            giftCertificateRepository.deleteById(id);
+            return giftCertificateDto;
         }
         throw new EntityModifyingException();
     }
@@ -119,7 +118,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificateDto> findCertificatesByTag(Long id) {
-        return giftCertificateDao.findCertificatesByTagId(id).stream().map(certificateToDtoConverter::convert).toList();
+        return giftCertificateDao.findCertificatesByTagId(id).stream().map(giftCertificateConverter::entityToDto).toList();
     }
 
     @Override
@@ -129,11 +128,17 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             validateGiftCertificate(giftCertificateDto);
             findById(id);
             giftCertificateDto.setLastUpdateDate(LocalDateTime.now());
-            if(giftCertificateDao.update(id, dtoToCertificateConverter.convert(giftCertificateDto)) > 0){
+            if(giftCertificateDao.update(id, giftCertificateConverter.dtoToEntity(giftCertificateDto)) > 0){
                 return findById(id);
             }
         }
         throw new EntityModifyingException();
+    }
+
+    private void setTagsToCertificate(GiftCertificateDto certificateDto){
+        Set<TagDto> tagSet = certificateDto.getTags();
+        tagSet = tagSet.stream().map(tagService::create).collect(Collectors.toSet());
+        certificateDto.setTags(tagSet);
     }
 
     private void validateGiftCertificate(GiftCertificateDto giftCertificateDto){
@@ -146,7 +151,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             message = "invalid duration - " + giftCertificateDto.getDescription();
         } else if (!validator.isValidCertificatePrice(giftCertificateDto.getPrice())) {
             message = "invalid price - " + giftCertificateDto.getDescription();
-        } else if (!validator.isValidTags(giftCertificateDto.getTags())) {
+        } else if (!giftCertificateDto.getTags().isEmpty() && !validator.isValidTags(giftCertificateDto.getTags())) {
             message = "invalid tags";
         }
 
