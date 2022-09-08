@@ -1,5 +1,6 @@
 package com.epam.esm.converters;
 
+import com.epam.esm.converters.impl.GiftCertificateConverterImpl;
 import com.epam.esm.dto.ResponseOrderDto;
 import com.epam.esm.mapper.UserMapper;
 import com.epam.esm.mapper.UserMapperImpl;
@@ -11,11 +12,11 @@ import org.springframework.stereotype.Component;
 public class OrderConverter {
 
     private final UserMapper userMapper = new UserMapperImpl();
-    private final CertificateToDtoConverter certificateToDtoConverter;
+    private final GiftCertificateConverterImpl giftCertificateConverter;
 
     @Autowired
-    public OrderConverter(CertificateToDtoConverter certificateToDtoConverter) {
-        this.certificateToDtoConverter = certificateToDtoConverter;
+    public OrderConverter(GiftCertificateConverterImpl giftCertificateConverter) {
+        this.giftCertificateConverter = giftCertificateConverter;
     }
 
     public ResponseOrderDto orderToResponseOderDto(Order order){
@@ -24,7 +25,7 @@ public class OrderConverter {
                .userDto(userMapper.userToDto(order.getUser()))
                .orderDate(order.getOrderDate())
                .cost(order.getCost())
-               .giftCertificateDtoList(order.getGiftCertificateList().stream().map(certificateToDtoConverter::convert).toList())
+               .giftCertificateDtoList(order.getGiftCertificateList().stream().map(giftCertificateConverter::entityToDto).toList())
                .build();
     }
 }
