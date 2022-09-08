@@ -1,8 +1,6 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.converters.CertificateToDtoConverter;
-import com.epam.esm.converters.DtoToCertificateConverter;
-import com.epam.esm.dao.GiftCertificateDao;
+import com.epam.esm.converters.impl.GiftCertificateConverterImpl;
 import com.epam.esm.dao.impl.GiftCertificateDaoImpl;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
@@ -11,8 +9,6 @@ import com.epam.esm.exceptions.EntityNotFoundException;
 import com.epam.esm.exceptions.InvalidDataProvidedException;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Tag;
-import com.epam.esm.service.GiftCertificateService;
-import com.epam.esm.validators.GiftCertificateValidator;
 import com.epam.esm.validators.impl.GiftCertificateValidatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -29,7 +25,6 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.MockitoAnnotations.openMocks;
 
 @ExtendWith(MockitoExtension.class)
 class GiftCertificateServiceImplTest {
@@ -56,9 +51,7 @@ class GiftCertificateServiceImplTest {
     @Mock
     private GiftCertificateValidatorImpl giftCertificateValidator;
     @Mock
-    private DtoToCertificateConverter dtoToCertificateConverter;
-    @Mock
-    private CertificateToDtoConverter certificateToDtoConverter;
+    private GiftCertificateConverterImpl giftCertificateConverter;
 
     @BeforeEach
     void setUp() {
@@ -90,8 +83,8 @@ class GiftCertificateServiceImplTest {
     void create() {
         checkFieldsValidation();
         doReturn(giftCertificate).when(giftCertificateDao).insert(any(GiftCertificate.class));
-        doReturn(giftCertificate).when(dtoToCertificateConverter).convert(any(GiftCertificateDto.class));
-        doReturn(giftCertificateDto).when(certificateToDtoConverter).convert(any(GiftCertificate.class));
+        doReturn(giftCertificate).when(giftCertificateConverter).dtoToEntity(any(GiftCertificateDto.class));
+        doReturn(giftCertificateDto).when(giftCertificateConverter).entityToDto(any(GiftCertificate.class));
         GiftCertificateDto actual = giftCertificateService.create(giftCertificateDto);
         assertEquals(giftCertificateDto, actual);
     }
@@ -110,7 +103,7 @@ class GiftCertificateServiceImplTest {
     @Test
     void findById() {
         doReturn(Optional.of(giftCertificate)).when(giftCertificateDao).findById(anyLong());
-        doReturn(giftCertificateDto).when(certificateToDtoConverter).convert(any(GiftCertificate.class));
+        doReturn(giftCertificateDto).when(giftCertificateConverter).entityToDto(any(GiftCertificate.class));
         GiftCertificateDto actual = giftCertificateService.findById(CERTIFICATE_ID);
         assertEquals(actual, giftCertificateDto);
     }
