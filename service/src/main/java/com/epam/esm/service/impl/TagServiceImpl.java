@@ -35,10 +35,9 @@ public class TagServiceImpl implements TagService {
             throw new EntityCreationException();
         }
         if(validator.isValidTagName(tagDto.getName())){
-            if (tagRepository.findByName(tagDto.getName()).isEmpty()){
-                return tagToDtoConverter.convert(tagRepository.save(dtoToTagConverter.convert(tagDto)));
-            }
-            throw new EntityAlreadyExistsException();
+            return tagToDtoConverter.convert(
+                    tagRepository.findByName(tagDto.getName()).orElseGet(() ->
+                            tagRepository.save(dtoToTagConverter.convert(tagDto))));
         }
         throw new InvalidDataProvidedException("invalid tag name - " + tagDto.getName());
     }
