@@ -1,7 +1,7 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.converters.DtoToCertificateConverter;
 import com.epam.esm.converters.OrderConverter;
+import com.epam.esm.converters.impl.GiftCertificateConverterImpl;
 import com.epam.esm.dto.RequestOrderDto;
 import com.epam.esm.dto.ResponseOrderDto;
 import com.epam.esm.mapper.UserMapper;
@@ -26,15 +26,15 @@ public class OrderServiceImpl implements OrderService {
     private final UserMapper userMapper = new UserMapperImpl();
     private final UserService userService;
     private final GiftCertificateService giftCertificateService;
-    private final DtoToCertificateConverter dtoToCertificateConverter;
+    private final GiftCertificateConverterImpl giftCertificateConverter;
     private final OrderRepository orderRepository;
     private final OrderConverter orderConverter;
 
     @Autowired
-    public OrderServiceImpl(UserService userService, GiftCertificateService giftCertificateService, DtoToCertificateConverter dtoToCertificateConverter, OrderRepository orderRepository, OrderConverter orderConverter) {
+    public OrderServiceImpl(UserService userService, GiftCertificateService giftCertificateService, GiftCertificateConverterImpl giftCertificateConverter, OrderRepository orderRepository, OrderConverter orderConverter) {
         this.userService = userService;
         this.giftCertificateService = giftCertificateService;
-        this.dtoToCertificateConverter = dtoToCertificateConverter;
+        this.giftCertificateConverter = giftCertificateConverter;
         this.orderRepository = orderRepository;
         this.orderConverter = orderConverter;
     }
@@ -44,7 +44,7 @@ public class OrderServiceImpl implements OrderService {
         User user = userMapper.dtoToUser(userService.findById(requestOrderDto.getUserId()));
         List<GiftCertificate> giftCertificateList = new ArrayList<>();
         for (long id : requestOrderDto.getCertificateIds()){
-            giftCertificateList.add(dtoToCertificateConverter.convert(giftCertificateService.findById(id)));
+            giftCertificateList.add(giftCertificateConverter.dtoToEntity(giftCertificateService.findById(id)));
         }
         Order order = Order.builder()
                 .user(user)
