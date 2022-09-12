@@ -15,9 +15,9 @@ public interface GiftCertificateService {
 
     GiftCertificateDto deleteById(Long id);
 
-    Set<TagDto> addTags(Long id, Set<TagDto> tags);
+    GiftCertificateDto addTags(Long id, Set<TagDto> tags);
 
-    GiftCertificateDto removeALlTags(Long id);
+    GiftCertificateDto removeAllTags(Long id);
 
     List<GiftCertificateDto> findCertificatesByTag(Long id);
 
