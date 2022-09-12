@@ -2,6 +2,7 @@ package com.epam.esm.controllers;
 
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.hateoas.HateoasBuilder;
 import com.epam.esm.service.GiftCertificateService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,10 +16,12 @@ import java.util.Set;
 public class GiftCertificatesController {
 
     private final GiftCertificateService service;
+    private final HateoasBuilder hateoasBuilder;
 
     @Autowired
-    public GiftCertificatesController(GiftCertificateService service) {
+    public GiftCertificatesController(GiftCertificateService service, HateoasBuilder hateoasBuilder) {
         this.service = service;
+        this.hateoasBuilder = hateoasBuilder;
     }
 
     @PostMapping
@@ -34,7 +37,9 @@ public class GiftCertificatesController {
 
     @GetMapping
     public List<GiftCertificateDto> findAll(){
-        return service.findAll();
+        List<GiftCertificateDto> certificates = service.findAll();
+        certificates.forEach(hateoasBuilder::setLinks);
+        return certificates;
     }
 
     @DeleteMapping("/{id}")
@@ -43,13 +48,13 @@ public class GiftCertificatesController {
     }
 
     @PutMapping("/add_tags/{id}")
-    public Set<TagDto> addTagsToCertificate(@PathVariable Long id, @RequestBody Set<TagDto> tags){
+    public GiftCertificateDto addTagsToCertificate(@PathVariable Long id, @RequestBody Set<TagDto> tags){
         return service.addTags(id, tags);
     }
 
     @DeleteMapping("/delete_tags/{id}")
     public GiftCertificateDto removeAllTags(@PathVariable Long id){
-        return service.removeALlTags(id);
+        return service.removeAllTags(id);
     }
 
     @GetMapping("/search_by_tag/{id}")
