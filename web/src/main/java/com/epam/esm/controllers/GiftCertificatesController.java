@@ -32,7 +32,9 @@ public class GiftCertificatesController {
 
     @GetMapping("/{id}")
     public GiftCertificateDto findById(@PathVariable Long id){
-        return service.findById(id);
+        GiftCertificateDto giftCertificate = service.findById(id);
+        hateoasBuilder.setLinks(giftCertificate);
+        return giftCertificate;
     }
 
     @GetMapping
