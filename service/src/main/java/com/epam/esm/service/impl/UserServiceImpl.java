@@ -4,7 +4,6 @@ import com.epam.esm.dto.UserDto;
 import com.epam.esm.exceptions.EntityNotFoundException;
 import com.epam.esm.exceptions.InvalidDataProvidedException;
 import com.epam.esm.mapper.UserMapper;
-import com.epam.esm.mapper.UserMapperImpl;
 import com.epam.esm.repository.UserRepository;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,17 +17,18 @@ import java.util.Objects;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private static final UserMapper userMapper = new UserMapperImpl();
+    private final UserMapper userMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     @Override
     public List<UserDto> findAll() {
         return userRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
-                .map(userMapper::userToDto).toList();
+                .map(userMapper::entityToDto).toList();
     }
 
     @Override
@@ -36,6 +36,6 @@ public class UserServiceImpl implements UserService {
         if(Objects.isNull(id)){
             throw new InvalidDataProvidedException("id is null");
         }
-        return userRepository.findById(id).map(userMapper::userToDto).orElseThrow(EntityNotFoundException::new);
+        return userRepository.findById(id).map(userMapper::entityToDto).orElseThrow(EntityNotFoundException::new);
     }
 }

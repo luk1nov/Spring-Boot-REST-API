@@ -1,9 +1,8 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.converters.DtoToTagConverter;
-import com.epam.esm.converters.TagToDtoConverter;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exceptions.*;
+import com.epam.esm.mapper.TagMapper;
 import com.epam.esm.repository.TagRepository;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validators.GiftCertificateValidator;
@@ -16,15 +15,13 @@ import java.util.Objects;
 
 @Service
 public class TagServiceImpl implements TagService {
-    private final DtoToTagConverter dtoToTagConverter;
-    private final TagToDtoConverter tagToDtoConverter;
+    private final TagMapper tagMapper;
     private final GiftCertificateValidator validator;
     private final TagRepository tagRepository;
 
     @Autowired
-    public TagServiceImpl(DtoToTagConverter dtoToTagConverter, TagToDtoConverter tagToDtoConverter, GiftCertificateValidator validator, TagRepository tagRepository) {
-        this.dtoToTagConverter = dtoToTagConverter;
-        this.tagToDtoConverter = tagToDtoConverter;
+    public TagServiceImpl(TagMapper tagMapper, GiftCertificateValidator validator, TagRepository tagRepository) {
+        this.tagMapper = tagMapper;
         this.validator = validator;
         this.tagRepository = tagRepository;
     }
@@ -35,22 +32,22 @@ public class TagServiceImpl implements TagService {
             throw new EntityCreationException();
         }
         if(validator.isValidTagName(tagDto.getName())){
-            return tagToDtoConverter.convert(
+            return tagMapper.entityToDto(
                     tagRepository.findByName(tagDto.getName()).orElseGet(() ->
-                            tagRepository.save(dtoToTagConverter.convert(tagDto))));
+                            tagRepository.save(tagMapper.dtoToEntity(tagDto))));
         }
         throw new InvalidDataProvidedException("invalid tag name - " + tagDto.getName());
     }
 
     @Override
     public List<TagDto> findAll() {
-        return tagRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream().map(tagToDtoConverter::convert).toList();
+        return tagRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream().map(tagMapper::entityToDto).toList();
     }
 
     @Override
     public TagDto findById(Long id) {
         if(Objects.nonNull(id)){
-            return tagRepository.findById(id).map(tagToDtoConverter::convert).orElseThrow(EntityNotFoundException::new);
+            return tagRepository.findById(id).map(tagMapper::entityToDto).orElseThrow(EntityNotFoundException::new);
         }
         throw new EntityNotFoundException();
     }
@@ -63,7 +60,7 @@ public class TagServiceImpl implements TagService {
         TagDto foundTag = findById(id);
         if(validator.isValidTagName(tagDto.getName())){
             foundTag.setName(tagDto.getName());
-            tagRepository.save(dtoToTagConverter.convert(foundTag));
+            tagRepository.save(tagMapper.dtoToEntity(foundTag));
             return foundTag;
         }
         throw new InvalidDataProvidedException("invalid tag name - " + tagDto.getName());
