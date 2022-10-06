@@ -1,14 +1,14 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.converters.impl.GiftCertificateConverterImpl;
-import com.epam.esm.dao.impl.GiftCertificateDaoImpl;
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exceptions.EntityCreationException;
 import com.epam.esm.exceptions.EntityNotFoundException;
 import com.epam.esm.exceptions.InvalidDataProvidedException;
+import com.epam.esm.mapper.GiftCertificateMapper;
 import com.epam.esm.model.GiftCertificate;
 import com.epam.esm.model.Tag;
+import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.validators.impl.GiftCertificateValidatorImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,7 +22,8 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doReturn;
 
@@ -47,11 +48,11 @@ class GiftCertificateServiceImplTest {
     @InjectMocks
     private GiftCertificateServiceImpl giftCertificateService;
     @Mock
-    private GiftCertificateDaoImpl giftCertificateDao;
+    private GiftCertificateRepository giftCertificateRepository;
     @Mock
     private GiftCertificateValidatorImpl giftCertificateValidator;
     @Mock
-    private GiftCertificateConverterImpl giftCertificateConverter;
+    private GiftCertificateMapper giftCertificateMapper;
 
     @BeforeEach
     void setUp() {
@@ -82,9 +83,9 @@ class GiftCertificateServiceImplTest {
     @Test
     void create() {
         checkFieldsValidation();
-        doReturn(giftCertificate).when(giftCertificateDao).insert(any(GiftCertificate.class));
-        doReturn(giftCertificate).when(giftCertificateConverter).dtoToEntity(any(GiftCertificateDto.class));
-        doReturn(giftCertificateDto).when(giftCertificateConverter).entityToDto(any(GiftCertificate.class));
+        doReturn(giftCertificate).when(giftCertificateRepository).save(any(GiftCertificate.class));
+        doReturn(giftCertificate).when(giftCertificateMapper).dtoToEntity(any(GiftCertificateDto.class));
+        doReturn(giftCertificateDto).when(giftCertificateMapper).entityToDto(any(GiftCertificate.class));
         GiftCertificateDto actual = giftCertificateService.create(giftCertificateDto);
         assertEquals(giftCertificateDto, actual);
     }
@@ -102,8 +103,8 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void findById() {
-        doReturn(Optional.of(giftCertificate)).when(giftCertificateDao).findById(anyLong());
-        doReturn(giftCertificateDto).when(giftCertificateConverter).entityToDto(any(GiftCertificate.class));
+        doReturn(Optional.of(giftCertificate)).when(giftCertificateRepository).findById(anyLong());
+        doReturn(giftCertificateDto).when(giftCertificateMapper).entityToDto(any(GiftCertificate.class));
         GiftCertificateDto actual = giftCertificateService.findById(CERTIFICATE_ID);
         assertEquals(actual, giftCertificateDto);
     }
@@ -115,7 +116,7 @@ class GiftCertificateServiceImplTest {
 
     @Test
     void findByIdShouldReturnEntityNotFoundException() {
-        doReturn(Optional.empty()).when(giftCertificateDao).findById(anyLong());
+        doReturn(Optional.empty()).when(giftCertificateRepository).findById(anyLong());
         assertThrows(EntityNotFoundException.class, () -> giftCertificateService.findById(CERTIFICATE_ID));
     }
 

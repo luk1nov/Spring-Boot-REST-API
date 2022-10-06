@@ -50,7 +50,9 @@ public class ControllerAdvisor {
     @ExceptionHandler
     @ResponseStatus(BAD_REQUEST)
     public ExceptionResponse handleEntityCreationException(EntityModifyingException e, Locale locale){
-        return exceptionResponseBuilder(e, e.getErrorCode(), locale);
+        ExceptionResponse response = exceptionResponseBuilder(e, e.getErrorCode(), locale);
+        response.setDescription(e.getMessage());
+        return response;
     }
 
     @ExceptionHandler

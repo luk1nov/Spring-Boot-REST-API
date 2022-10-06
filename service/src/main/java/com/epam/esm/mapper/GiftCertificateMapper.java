@@ -3,10 +3,7 @@ package com.epam.esm.mapper;
 
 import com.epam.esm.dto.GiftCertificateDto;
 import com.epam.esm.model.GiftCertificate;
-import org.mapstruct.InjectionStrategy;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingConstants;
+import org.mapstruct.*;
 
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING,
         uses = TagMapper.class,

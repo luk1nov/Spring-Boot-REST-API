@@ -2,6 +2,8 @@ package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.RequestOrderDto;
 import com.epam.esm.dto.ResponseOrderDto;
+import com.epam.esm.exceptions.EntityNotFoundException;
+import com.epam.esm.exceptions.InvalidDataProvidedException;
 import com.epam.esm.mapper.GiftCertificateMapper;
 import com.epam.esm.mapper.OrderMapper;
 import com.epam.esm.mapper.UserMapper;
@@ -13,11 +15,13 @@ import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -58,5 +62,13 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAll(Sort.by(Sort.Direction.ASC, "id")).stream()
                 .map(orderMapper::orderToResponseDto)
                 .toList();
+    }
+
+    @Override
+    public ResponseOrderDto findById(Long id) {
+        if(Objects.nonNull(id)){
+            return orderRepository.findById(id).map(orderMapper::orderToResponseDto).orElseThrow(EntityNotFoundException::new);
+        }
+        throw new InvalidDataProvidedException("id is null");
     }
 }

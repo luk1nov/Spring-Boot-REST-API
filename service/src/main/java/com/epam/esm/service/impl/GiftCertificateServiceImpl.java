@@ -7,6 +7,7 @@ import com.epam.esm.exceptions.EntityNotFoundException;
 import com.epam.esm.exceptions.InvalidDataProvidedException;
 import com.epam.esm.mapper.GiftCertificateMapper;
 import com.epam.esm.mapper.TagMapper;
+import com.epam.esm.model.Tag;
 import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
@@ -24,7 +25,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class GiftCertificateServiceImpl implements GiftCertificateService {
-
     private final GiftCertificateMapper giftCertificateMapper;
     private final TagMapper tagMapper;
     private final GiftCertificateValidator validator;
@@ -123,13 +123,21 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Transactional
     public GiftCertificateDto update(Long id, GiftCertificateDto giftCertificateDto) {
         if(Objects.nonNull(id) || Objects.nonNull(giftCertificateDto)){
+            GiftCertificateDto existingGift = findById(id);
             validateGiftCertificate(giftCertificateDto);
             giftCertificateDto.setId(id);
+            giftCertificateDto.setCreateDate(existingGift.getCreateDate());
+            setTagsToCertificate(giftCertificateDto);
             return giftCertificateMapper.entityToDto(
                     giftCertificateRepository.save(giftCertificateMapper.dtoToEntity(giftCertificateDto))
             );
         }
         throw new EntityModifyingException();
+    }
+
+    @Override
+    public boolean isCertificateExistsWithTag(Tag tag) {
+        return Objects.nonNull(tag) && giftCertificateRepository.existsGiftCertificateByTagListContaining(tag);
     }
 
     private void setTagsToCertificate(GiftCertificateDto certificateDto){

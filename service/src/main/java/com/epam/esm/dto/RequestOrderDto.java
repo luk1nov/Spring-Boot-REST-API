@@ -6,6 +6,6 @@ import java.util.List;
 
 @Data
 public class RequestOrderDto {
-    private long userId;
+    private Long userId;
     private List<Integer> certificateIds;
 }

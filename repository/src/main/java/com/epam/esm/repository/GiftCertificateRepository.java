@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface GiftCertificateRepository extends JpaRepository<GiftCertificate, Long> {
     List<GiftCertificate> findGiftCertificatesByTagListIsContaining(Tag tag);
+
+    boolean existsGiftCertificateByTagListContaining(Tag tag);
 }

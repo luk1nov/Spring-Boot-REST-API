@@ -1,19 +1,19 @@
 package com.epam.esm.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 import org.springframework.stereotype.Component;
 
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = false)
 @Data
-@Component
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonPropertyOrder({"id", "name"})
 public class TagDto extends RepresentationModel<TagDto> {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    private long id;
-
+    private Long id;
     private String name;
 
     public TagDto(String name) {

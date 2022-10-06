@@ -27,14 +27,14 @@ public class GiftCertificate {
     private BigDecimal price;
     @Column(name = "duration", nullable = false)
     private int duration;
-    @Column(name = "create_date", nullable = false)
+    @Column(name = "create_date")
     private LocalDateTime createDate;
-    @Column(name = "last_update_date", nullable = false)
+    @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "gift_certificate_has_tag"
             , joinColumns = @JoinColumn(name = "gift_certificate_id", referencedColumnName = "id")
             , inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))

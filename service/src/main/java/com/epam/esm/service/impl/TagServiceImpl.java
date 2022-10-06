@@ -3,10 +3,15 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.exceptions.*;
 import com.epam.esm.mapper.TagMapper;
+import com.epam.esm.model.Tag;
+import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.TagRepository;
+import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validators.GiftCertificateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -70,9 +75,16 @@ public class TagServiceImpl implements TagService {
     public TagDto delete(Long id) {
         if(Objects.nonNull(id)){
             TagDto tag = findById(id);
-            tagRepository.deleteById(id);
-            return tag;
+            if (tagRepository.isTagUsed(tag.getId()) == 0){
+                tagRepository.deleteById(id);
+                return tag;
+            }
+            throw new EntityModifyingException("Tag is currently in use");
         }
-        throw new EntityModifyingException();
+        throw new InvalidDataProvidedException("Id is null");
+    }
+
+    public Page<TagDto> findAllByPageable(int page, int size, Sort sort){
+        return tagRepository.findAll(PageRequest.of(page, size, sort)).map(tagMapper::entityToDto);
     }
 }
