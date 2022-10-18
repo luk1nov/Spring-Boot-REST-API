@@ -1,12 +1,12 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.exceptions.*;
+import com.epam.esm.exceptions.EntityCreationException;
+import com.epam.esm.exceptions.EntityModifyingException;
+import com.epam.esm.exceptions.EntityNotFoundException;
+import com.epam.esm.exceptions.InvalidDataProvidedException;
 import com.epam.esm.mapper.TagMapper;
-import com.epam.esm.model.Tag;
-import com.epam.esm.repository.GiftCertificateRepository;
 import com.epam.esm.repository.TagRepository;
-import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.validators.GiftCertificateValidator;
 import org.springframework.beans.factory.annotation.Autowired;

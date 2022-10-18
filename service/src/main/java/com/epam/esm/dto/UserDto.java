@@ -19,4 +19,11 @@ public class UserDto extends RepresentationModel<UserDto> {
     private String firstName;
     private String lastName;
     private String email;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private String password;
+    private Role role;
+
+    public enum Role {
+        ADMIN, USER
+    }
 }

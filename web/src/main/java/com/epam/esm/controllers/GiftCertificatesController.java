@@ -58,7 +58,6 @@ public class GiftCertificatesController {
 
     @PutMapping("/{id}/add_tags")
     public GiftCertificateDto addTagsToCertificate(@PathVariable Long id, @RequestBody Set<TagDto> tags){
-        log.error(tags.toString());
         return service.addTags(id, tags);
     }
 
@@ -69,7 +68,6 @@ public class GiftCertificatesController {
 
     @GetMapping("/search_by_tag/{id}")
     public List<GiftCertificateDto> findCertificatesByTag(@PathVariable Long id){
-        log.debug("asd");
         List<GiftCertificateDto> gifts = service.findCertificatesByTag(id);
         gifts.forEach(giftCertificateProcessor::process);
         return gifts;

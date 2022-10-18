@@ -2,8 +2,6 @@ package com.epam.esm.controllers;
 
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.hateoas.TagProcessor;
-import com.epam.esm.mapper.TagMapper;
-import com.epam.esm.model.Tag;
 import com.epam.esm.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -12,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -19,13 +18,11 @@ import java.util.List;
 public class TagsController {
     private final TagService tagService;
     private final TagProcessor tagProcessor;
-    private final TagMapper tagMapper;
 
     @Autowired
-    public TagsController(TagService tagService, TagProcessor tagProcessor, TagMapper tagMapper) {
+    public TagsController(TagService tagService, TagProcessor tagProcessor) {
         this.tagService = tagService;
         this.tagProcessor = tagProcessor;
-        this.tagMapper = tagMapper;
     }
 
     @GetMapping("/{id}")
@@ -36,7 +33,7 @@ public class TagsController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TagDto insert(@RequestBody TagDto tagDto){
+    public TagDto insert(@Valid @RequestBody TagDto tagDto){
         return tagService.create(tagDto);
     }
 

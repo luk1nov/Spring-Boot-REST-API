@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.Objects;
 import java.util.Set;
 
 @Data
@@ -21,6 +22,11 @@ public class User {
     private String lastName;
     @Column(name = "email", unique = true, nullable = false)
     private String email;
+    @Column(name = "password", nullable = false)
+    private String password;
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude

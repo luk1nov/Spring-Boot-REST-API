@@ -25,7 +25,7 @@ public class ResponseOrderProcessor implements RepresentationModelProcessor<Resp
     public ResponseOrderDto process(ResponseOrderDto order) {
         order.getGiftCertificateDtoList().forEach(giftCertificateProcessor::process);
         setCommonLinks(OrderController.class, order, order.getId(), true, SELF);
-        order.add(linkTo(UsersController.class).slash(order.getUserDto().getId()).withRel("user"));
+        userProcessor.process(order.getUserDto());
         return order;
     }
 }

@@ -1,5 +1,6 @@
 package com.epam.esm.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
@@ -21,6 +22,7 @@ public class ResponseOrderDto extends RepresentationModel<ResponseOrderDto> {
     private Long id;
     private BigDecimal cost;
     @JsonProperty("orderDate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy hh:mm:ss")
     private LocalDateTime orderDate;
     @JsonProperty("user")
     private UserDto userDto;
